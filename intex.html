@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BPT Remodeling Construction, Inc.</title> 
+<link rel="icon" type="image/png" href="img/favicon.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     PARA EDITAR TEXTOS:
+     Cada texto está dos veces seguidas: primero en <span class="en">
+     (inglés) y luego en <span class="es"> (español). Edita el texto
+     que quieras cambiar directo ahí, y listo — no hay que tocar nada
+     más en este archivo.
+     ============================================================ */
+
+  :root{
+    --navy:#0A2050;
+    --navy-light:#122C63;
+    --red:#C91924;
+    --red-hover:#E01E2B;
+    --ink:#1B2430;
+    --gray-text:#5B646F;
+    --gray-line:#E2E5EA;
+    --gray-bg:#F4F5F7;
+    --blue-muted:#9FB0CE;
+    --blue-pale:#C6D0E2;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:#FFFFFF;
+    color:var(--ink);
+    font-family:'Barlow', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{ color:var(--red); text-decoration:none; }
+  h1,h2,h3{
+    font-family:'Barlow Condensed', sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    margin:0;
+  }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 20px; }
+
+  /* --- Language toggle logic --- */
+  .es{ display:inline; }
+  .en{ display:none; }
+  body.lang-en .es{ display:none; }
+  body.lang-en .en{ display:inline; }
+  /* block-level text that needs display:block instead of inline */
+  p .es, p .en, div.block-text{}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:#FFFFFF;
+    border-bottom:1px solid var(--gray-line);
+  }
+  .header-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:14px; padding:12px 20px;
+  }
+  .logo{ font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; color:var(--navy); letter-spacing:.02em; white-space:nowrap; }
+  .logo small{ display:block; font-family:'Barlow',sans-serif; font-size:9px; font-weight:600; letter-spacing:.12em; color:var(--gray-text); text-transform:uppercase; }
+  nav.main-nav{ display:none; }
+  .header-actions{ display:flex; align-items:center; gap:8px; }
+  .lang-btn{
+    border:1px solid #C0C6CF; background:#fff; color:var(--navy);
+    font-family:'Barlow',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:.08em; padding:8px 10px; cursor:pointer;
+  }
+  .call-btn-header{
+    background:var(--red); color:#fff; padding:10px 14px;
+    font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700;
+    letter-spacing:.02em; white-space:nowrap;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{ background:var(--navy); color:#fff; }
+  .hero-inner{
+    display:flex; flex-direction:column; gap:18px;
+    padding:28px 20px 30px;
+    max-width:1200px; margin:0 auto;
+  }
+  .hero-copy{
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; gap:14px;
+    max-width:620px; width:100%; margin:0 auto;
+  }
+  .eyebrow{ display:flex; align-items:center; justify-content:center; gap:10px; }
+  .eyebrow .bar{ width:28px; height:3px; background:var(--red); display:block; }
+  .eyebrow span{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--blue-muted); }
+  h1.hero-title{ font-size:clamp(40px,11vw,62px); line-height:0.88; max-width:10.5ch; letter-spacing:-.065em; margin:0 auto; }
+  .hero-sub{ font-size:16px; line-height:1.5; color:var(--blue-pale); max-width:32ch; margin:0 auto; }
+  .hero-ctas{ display:flex; flex-direction:column; gap:12px; width:min(100%, 440px); margin:4px auto 0; }
+  .btn-primary, .btn-secondary{
+    text-align:center;
+    font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700;
+    letter-spacing:.02em; padding:16px 22px;
+    width:100%;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary{ background:var(--red); color:#fff; box-shadow:0 10px 18px rgba(201,25,36,.22); }
+  .btn-secondary{ border:1px solid #40527C; color:#fff; }
+  .btn-primary:hover, .btn-secondary:hover{ transform:translateY(-1px); }
+  .hero-footnote{ font-size:13px; color:#8E9FBE; margin:0 auto; line-height:1.5; max-width:32ch; }
+  .hero-img{
+    position:relative; height:240px; background:var(--navy-light);
+    overflow:hidden; margin:0 -20px;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 14px 25px rgba(2,10,21,.18);
+  }
+  .hero-img img{ width:100%; height:100%; object-fit:cover; }
+  .hero-img .accent{ position:absolute; left:0; bottom:0; width:6px; height:70px; background:var(--red); }
+  .img-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    background:repeating-linear-gradient(45deg,#16326e,#16326e 10px,#122C63 10px,#122C63 20px);
+    color:#9FB0CE; font-size:12px; letter-spacing:.06em; text-align:center; padding:10px;
+    overflow:hidden;
+  }
+  .img-placeholder img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* ---------- STATS BAR ---------- */
+  .stats{ background:var(--gray-bg); border-bottom:1px solid var(--gray-line); }
+  .stats-inner{ padding:24px 20px; display:grid; grid-template-columns:1fr 1fr; gap:20px 16px; }
+  .stat-item span.big{ display:block; font-family:'Barlow Condensed',sans-serif; font-size:19px; font-weight:700; text-transform:uppercase; color:var(--navy); }
+  .stat-item span.small{ display:block; font-size:13px; color:var(--gray-text); margin-top:2px; }
+
+  /* ---------- SERVICES ---------- */
+  section{ padding:0; }
+  .section-head{
+    display:flex; flex-direction:column; gap:10px;
+    border-bottom:3px solid var(--navy); padding-bottom:16px; margin-bottom:28px;
+  }
+  .section-head h2{ font-size:clamp(30px,8vw,48px); line-height:1; color:var(--navy); }
+  .section-head p{ font-size:15px; line-height:1.5; color:var(--gray-text); margin:0; }
+  .section-pad{ padding:44px 20px; }
+  .services-grid{
+    display:grid; grid-template-columns:1fr; gap:1px;
+    background:var(--gray-line); border:1px solid var(--gray-line);
+  }
+  .service-card{
+    background:#fff; padding:24px 20px; display:flex; flex-direction:column; gap:10px;
+  }
+  .service-card .dot{ width:14px; height:14px; background:var(--red); display:block; }
+  .service-card h3{ font-size:24px; line-height:1.05; color:var(--navy); }
+  .service-card p{ font-size:15px; line-height:1.6; color:var(--gray-text); margin:0; }
+
+  .also-box{
+    margin-top:28px; border:1px solid var(--gray-line); border-top:3px solid var(--red);
+    padding:22px 20px; display:flex; flex-direction:column; gap:16px;
+  }
+  .also-box h3{ font-size:24px; color:var(--navy); }
+  .also-list{ display:grid; grid-template-columns:1fr; gap:10px; }
+  .also-list span{ font-size:15px; font-weight:500; border-bottom:1px solid #EDEFF2; padding-bottom:8px; }
+
+  /* ---------- PROCESS ---------- */
+  .process{ background:var(--navy); color:#fff; }
+  .process .section-head{ border-bottom:none; }
+  .process .section-head h2{ color:#fff; }
+  .process .section-head p{ color:var(--blue-muted); }
+  .steps-grid{ display:grid; grid-template-columns:1fr; gap:26px; }
+  .step{ border-top:3px solid var(--red); padding-top:16px; display:flex; flex-direction:column; gap:8px; }
+  .step .num{ font-family:'Barlow Condensed',sans-serif; font-size:36px; font-weight:700; color:#40527C; }
+  .step h3{ font-size:22px; }
+  .step p{ font-size:15px; line-height:1.6; color:var(--blue-pale); margin:0; }
+
+  /* ---------- AREAS ---------- */
+  .areas-inner{ display:flex; flex-direction:column; gap:24px; }
+  .areas-text h2{ font-size:clamp(30px,8vw,48px); color:var(--navy); line-height:1; margin-bottom:12px; }
+  .areas-text p{ font-size:15px; line-height:1.6; color:var(--gray-text); margin:0 0 14px; }
+  .ask-city{ display:inline-block; border-bottom:2px solid var(--red); color:var(--navy); font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:700; text-transform:uppercase; padding-bottom:2px; }
+  .city-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+  .city-tags span{ border:1px solid #D6DAE1; padding:8px 12px; font-size:13px; font-weight:500; }
+  .city-tags span.highlight{ background:var(--navy); border-color:var(--navy); color:#fff; }
+
+  /* ---------- ABOUT ---------- */
+  .about{ background:var(--gray-bg); border-top:1px solid var(--gray-line); border-bottom:1px solid var(--gray-line); }
+  .about-inner{ display:flex; flex-direction:column; gap:28px; }
+  .about-eyebrow{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--red); }
+  .about-text h2{ font-size:clamp(28px,7.5vw,42px); color:var(--navy); margin:8px 0 14px; }
+  .about-text p{ font-size:16px; line-height:1.6; color:#3F4650; margin:0 0 14px; }
+  .badges{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
+  .badges span{ background:#fff; border:1px solid #D6DAE1; padding:9px 14px; font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; text-transform:uppercase; color:var(--navy); }
+  .about-gallery{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; width:100%; min-width:0; }
+  .about-gallery .tall{ grid-column:1 / -1; min-height:220px; }
+  .about-gallery .img-placeholder{ font-size:11px; min-height:150px; padding:0; border:1px solid rgba(10,32,80,.12); }
+  .about-gallery-col{ width:100%; min-width:0; }
+
+  /* ---------- FAQ ---------- */
+  .faq-grid{ display:grid; grid-template-columns:1fr; gap:24px; }
+  .faq-item h3{ font-size:19px; color:var(--navy); margin-bottom:8px; line-height:1.15; }
+  .faq-item p{ font-size:15px; line-height:1.6; color:var(--gray-text); margin:0; }
+
+  /* ---------- CTA ---------- */
+  .cta{ background:var(--red); color:#fff; }
+  .cta-inner{ display:flex; flex-direction:column; gap:22px; padding:40px 20px; }
+  .cta h2{ font-size:clamp(28px,8vw,40px); line-height:1; }
+  .cta p{ font-size:16px; color:#FFD9DC; margin:8px 0 0; }
+  .cta-actions{ display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
+  .cta-call{ background:#fff; color:var(--navy); padding:16px 24px; font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:700; }
+  .cta-email{ color:#fff; font-size:14px; border-bottom:1px solid rgba(255,255,255,.5); }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--navy); color:#fff; }
+  .footer-inner{ padding:40px 20px 20px; display:flex; flex-direction:column; gap:28px; }
+  .footer-logo-box{ background:#fff; padding:8px 12px; display:inline-block; }
+  .footer-logo-box span{ font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; color:var(--navy); }
+  .footer-col span.label{ font-family:'Barlow Condensed',sans-serif; font-size:17px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:8px; }
+  .footer-col span.line, .footer-col p{ display:block; font-size:14px; color:var(--blue-muted); margin:0 0 4px; }
+  .footer-col a.phone{ font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:700; color:#fff; display:block; margin-bottom:6px; }
+  .footer-col a.mail{ font-size:14px; color:var(--blue-muted); }
+  .footer-bottom{ border-top:1px solid #223A6B; padding:14px 20px 28px; font-size:12px; color:#7E92B8; display:flex; flex-direction:column; gap:6px; }
+
+  /* ============================================================
+     A partir de 880px de ancho pasa a la versión de escritorio
+     ============================================================ */
+  @media (min-width: 880px){
+    nav.main-nav{ display:flex; align-items:center; gap:22px; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+    nav.main-nav a{ color:#3F4650; }
+    .header-inner{ padding:14px 32px; }
+    .call-btn-header{ font-size:18px; padding:11px 18px; }
+
+    .hero-inner{
+      display:grid; grid-template-columns:1.05fr 0.95fr; align-items:stretch;
+      gap:40px; max-width:1200px; margin:0 auto; padding:72px 32px 84px;
+    }
+    .hero-copy{ display:flex; flex-direction:column; gap:22px; justify-content:center; align-items:flex-start; text-align:left; }
+    h1.hero-title{ font-size:clamp(48px,5.4vw,72px); max-width:15ch; margin:0; letter-spacing:-.06em; }
+    .eyebrow{ justify-content:flex-start; }
+    .hero-sub{ max-width:52ch; margin:0; }
+    .hero-ctas{ flex-direction:row; flex-wrap:wrap; width:auto; margin:0; }
+    .btn-primary, .btn-secondary{ width:auto; }
+    .hero-footnote{ margin:0; max-width:none; }
+    .hero-img{ height:auto; margin:0; box-shadow:none; border:none; }
+
+    .stats-inner{ max-width:1200px; margin:0 auto; padding:26px 32px; grid-template-columns:repeat(4,1fr); }
+
+    .section-pad{ max-width:1200px; margin:0 auto; padding:80px 32px; }
+    .section-head{ flex-direction:row; align-items:flex-end; justify-content:space-between; }
+    .section-head p{ max-width:44ch; }
+    .services-grid{ grid-template-columns:repeat(3,1fr); }
+    .also-box{ flex-direction:row; align-items:flex-start; gap:32px; }
+    .also-box h3{ flex:0 0 190px; }
+    .also-list{ grid-template-columns:repeat(3,1fr); flex:1; }
+
+    .steps-grid{ grid-template-columns:repeat(4,1fr); }
+
+    .areas-inner{ flex-direction:row; align-items:flex-start; gap:56px; }
+    .areas-text{ flex:1; }
+    .areas-tags-col{ flex:1; padding-top:8px; }
+
+    .about-inner{ flex-direction:row; align-items:center; gap:56px; }
+    .about-text{ flex:1; }
+    .about-gallery-col{ flex:1; }
+    .about-gallery{ grid-template-columns:repeat(2, minmax(0, 1fr)); grid-template-rows:minmax(220px, 1.25fr) minmax(170px, 1fr); gap:12px; max-width:620px; }
+    .about-gallery .tall{ grid-column:1 / -1; min-height:0; }
+    .about-gallery .img-placeholder{ min-height:0; height:100%; }
+
+    .faq-grid{ grid-template-columns:repeat(2,1fr); gap:36px 56px; }
+
+    .cta-inner{ flex-direction:row; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:52px 32px; }
+
+    .footer-inner{ max-width:1200px; margin:0 auto; padding:56px 32px 20px; flex-direction:row; align-items:flex-start; justify-content:space-between; gap:40px; }
+    .footer-bottom{ max-width:1200px; margin:0 auto; padding:16px 32px 36px; flex-direction:row; justify-content:space-between; }
+  }
+</style>
+</head>
+<body class="lang-es">
+
+  <!-- ================= HEADER ================= -->
+  <header>
+    <div class="header-inner">
+      <div class="logo"><img src="img/logo.jpg" alt="BPT Remodeling" height="90" width="180"></div>
+      <nav class="main-nav">
+        <a href="#services"><span class="en">Services</span><span class="es">Servicios</span></a>
+        <a href="#process"><span class="en">Process</span><span class="es">Proceso</span></a>
+        <a href="#areas"><span class="en">Service Area</span><span class="es">Cobertura</span></a>
+        <a href="#about"><span class="en">About</span><span class="es">Nosotros</span></a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="header-actions">
+        <button class="lang-btn" onclick="toggleLang()"><span id="lang-btn-label">EN</span></button>
+        <a class="call-btn-header" href="tel:+13854922104">385 492 2104</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow">
+          <span class="bar"></span>
+          <span><span class="en">Licensed &amp; Insured · Utah &amp; Idaho Falls</span><span class="es">Con licencia y seguro · Utah e Idaho Falls</span></span>
+        </div>
+        <h1 class="hero-title">
+          <span class="en">Remodeling done right the first time</span>
+          <span class="es">Remodelación bien hecha desde la primera vez</span>
+        </h1>
+        <p class="hero-sub">
+          <span class="en">Painting, drywall, framing, flooring, tile and finish carpentry for homes across Utah. One crew, clear pricing, and a jobsite left clean at the end of every day.</span>
+          <span class="es">Pintura, drywall, framing, pisos, azulejo y carpintería de acabado para casas en todo Utah. Un solo equipo, precios claros y el área limpia al terminar cada día.</span>
+        </p>
+        <div class="hero-ctas">
+          <a class="btn-primary" href="tel:+13854922104"><span class="en">Call 385 492 2104</span><span class="es">Llame al 385 492 2104</span></a>
+          <a class="btn-secondary" href="#services"><span class="en">See our services</span><span class="es">Ver servicios</span></a>
+        </div>
+        <p class="hero-footnote">
+          <span class="en">Free estimates · We speak English &amp; Spanish · bptremodelingllc@outlook.com</span>
+          <span class="es">Presupuestos gratis · Hablamos español e inglés · bptremodelingllc@outlook.com</span>
+        </p>
+      </div>
+      <div class="hero-img">
+        <!-- IMAGEN: reemplazar por foto real (ej. instalador cortando azulejo) -->
+        <div class="img-placeholder"><img src="img/worker.jpg" alt="BPT Remodeling"></div>
+        <div class="accent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATS BAR ================= -->
+  <section class="stats">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <span class="big"><span class="en">Licensed &amp; insured</span><span class="es">Licencia y seguro</span></span>
+        <span class="small"><span class="en">In Utah, and working in Idaho Falls, ID</span><span class="es">En Utah, y trabajamos en Idaho Falls, ID</span></span>
+      </div>
+      <div class="stat-item">
+        <span class="big"><span class="en">Free estimates</span><span class="es">Presupuesto gratis</span></span>
+        <span class="small"><span class="en">Walkthrough, then a written number</span><span class="es">Visitamos y le damos el precio por escrito</span></span>
+      </div>
+      <div class="stat-item">
+        <span class="big"><span class="en">Full remodels</span><span class="es">Remodelación completa</span></span>
+        <span class="small"><span class="en">Kitchens, bathrooms, whole-home</span><span class="es">Cocinas, baños y casa completa</span></span>
+      </div>
+      <div class="stat-item">
+        <span class="big"><span class="en">Bilingual crew</span><span class="es">Equipo bilingüe</span></span>
+        <span class="small"><span class="en">Talk directly with the people working</span><span class="es">Hable directo con quien hace el trabajo</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SERVICES ================= -->
+  <section id="services">
+    <div class="section-pad">
+      <div class="section-head">
+        <h2><span class="en">Our services</span><span class="es">Nuestros servicios</span></h2>
+        <p><span class="en">Everything from a single patch to a full remodel — done by the same crew, so nothing gets handed off and forgotten.</span><span class="es">Desde un resane hasta una remodelación completa — con el mismo equipo, sin subcontratos que dejen el trabajo a medias.</span></p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <span class="dot"></span>
+          <h3><span class="en">Interior &amp; exterior painting</span><span class="es">Pintura interior y exterior</span></h3>
+          <p><span class="en">Prep, patching, caulking and clean lines. Walls, ceilings, trim, doors, siding and stucco.</span><span class="es">Preparación, resanes, sellado y líneas limpias. Paredes, techos, molduras, puertas, siding y estuco.</span></p>
+        </div>
+        <div class="service-card">
+          <span class="dot"></span>
+          <h3><span class="en">Drywall install &amp; repair</span><span class="es">Drywall: instalación y reparación</span></h3>
+          <p><span class="en">Hang, tape and finish new walls, or repair water damage and holes so the patch disappears.</span><span class="es">Instalamos, encintamos y terminamos paredes nuevas, o reparamos daños de agua y hoyos sin que se note.</span></p>
+        </div>
+        <div class="service-card">
+          <span class="dot"></span>
+          <h3><span class="en">Texture &amp; texture matching</span><span class="es">Textura y igualado de textura</span></h3>
+          <p><span class="en">Knockdown, orange peel, smooth. We match existing texture so repairs blend into the wall.</span><span class="es">Knockdown, orange peel o liso. Igualamos la textura existente para que la reparación no se vea.</span></p>
+        </div>
+        <div class="service-card">
+          <span class="dot"></span>
+          <h3><span class="en">Framing</span><span class="es">Framing / estructura</span></h3>
+          <p><span class="en">New walls, basement finishes, openings and structural changes framed square and to code.</span><span class="es">Paredes nuevas, terminado de basements, aperturas y cambios estructurales a escuadra y según código.</span></p>
+        </div>
+        <div class="service-card">
+          <span class="dot"></span>
+          <h3><span class="en">Laminate flooring &amp; tile</span><span class="es">Pisos laminados y azulejo</span></h3>
+          <p><span class="en">Laminate and vinyl plank, plus tile floors, showers and backsplashes with level, even grout lines.</span><span class="es">Laminado y vinil, más pisos de azulejo, regaderas y backsplash con líneas de lechada parejas.</span></p>
+        </div>
+        <div class="service-card">
+          <span class="dot"></span>
+          <h3><span class="en">Finish carpentry</span><span class="es">Carpintería de acabado</span></h3>
+          <p><span class="en">Baseboards, trim, casing, doors, windows and cabinet installation — tight joints, no gaps.</span><span class="es">Baseboards, molduras, marcos, puertas, ventanas e instalación de gabinetes — uniones cerradas, sin huecos.</span></p>
+        </div>
+      </div>
+
+      <div class="also-box">
+        <h3><span class="en">Also offering</span><span class="es">También hacemos</span></h3>
+        <div class="also-list">
+          <span><span class="en">Baseboards &amp; trim installation</span><span class="es">Baseboards y molduras</span></span>
+          <span><span class="en">Door &amp; window installation</span><span class="es">Instalación de puertas y ventanas</span></span>
+          <span><span class="en">Cabinet installation</span><span class="es">Instalación de gabinetes</span></span>
+          <span><span class="en">Kitchen remodeling</span><span class="es">Remodelación de cocinas</span></span>
+          <span><span class="en">Bathroom remodeling</span><span class="es">Remodelación de baños</span></span>
+          <span><span class="en">Home renovations</span><span class="es">Renovación de casas</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS ================= -->
+  <section id="process" class="process">
+    <div class="section-pad">
+      <div class="section-head">
+        <h2><span class="en">How we work</span><span class="es">Cómo trabajamos</span></h2>
+        <p><span class="en">Four steps, no surprises. You know the price and the schedule before anyone picks up a tool.</span><span class="es">Cuatro pasos, sin sorpresas. Usted sabe el precio y las fechas antes de que empiece el trabajo.</span></p>
+      </div>
+      <div class="steps-grid">
+        <div class="step">
+          <span class="num">01</span>
+          <h3><span class="en">Call &amp; walkthrough</span><span class="es">Llamada y visita</span></h3>
+          <p><span class="en">Call or text us. We come out, look at the space and listen to what you want done.</span><span class="es">Llame o mande mensaje. Vamos a ver el espacio y escuchamos qué necesita.</span></p>
+        </div>
+        <div class="step">
+          <span class="num">02</span>
+          <h3><span class="en">Written estimate</span><span class="es">Presupuesto por escrito</span></h3>
+          <p><span class="en">A clear price with the work and materials spelled out. Free, and no pressure to sign.</span><span class="es">Un precio claro con el trabajo y los materiales detallados. Gratis y sin compromiso.</span></p>
+        </div>
+        <div class="step">
+          <span class="num">03</span>
+          <h3><span class="en">Scheduled work</span><span class="es">Trabajo programado</span></h3>
+          <p><span class="en">Set start and finish dates. Floors and furniture covered, dust controlled, site cleaned daily.</span><span class="es">Fechas fijas de inicio y fin. Cubrimos pisos y muebles, controlamos el polvo y limpiamos a diario.</span></p>
+        </div>
+        <div class="step">
+          <span class="num">04</span>
+          <h3><span class="en">Final walkthrough</span><span class="es">Revisión final</span></h3>
+          <p><span class="en">We walk the job with you and fix the punch list before we call it finished.</span><span class="es">Revisamos el trabajo con usted y corregimos los detalles antes de darlo por terminado.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SERVICE AREAS ================= -->
+  <section id="areas">
+    <div class="section-pad">
+      <div class="areas-inner">
+        <div class="areas-text">
+          <h2><span class="en">Where we work</span><span class="es">Zonas que atendemos</span></h2>
+          <p><span class="en">Based in Utah and licensed and insured here, with crews also working in Idaho Falls, ID. Don't see your city? Call us — if it's close, we'll come look.</span><span class="es">Estamos en Utah con licencia y seguro, y también trabajamos en Idaho Falls, ID. ¿No ve su ciudad? Llámenos — si está cerca, vamos a verlo.</span></p>
+          <a class="ask-city" href="tel:+13854922104"><span class="en">Ask about your city →</span><span class="es">Pregunte por su ciudad →</span></a>
+        </div>
+        <div class="areas-tags-col">
+          <div class="city-tags">
+            <span>Provo, UT</span>
+            <span>Orem, UT</span>
+            <span>Springville, UT</span>
+            <span>Spanish Fork, UT</span>
+            <span>Payson, UT</span>
+            <span>American Fork, UT</span>
+            <span>Pleasant Grove, UT</span>
+            <span>Lehi, UT</span>
+            <span>Saratoga Springs, UT</span>
+            <span>Draper, UT</span>
+            <span>Sandy, UT</span>
+            <span>West Jordan, UT</span>
+            <span>Salt Lake City, UT</span>
+            <span>Heber City, UT</span>
+            <span>Park City, UT</span>
+            <span>Ogden, UT</span>
+            <span>Logan, UT</span>
+            <span class="highlight">Idaho Falls, ID</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about" class="about">
+    <div class="section-pad">
+      <div class="about-inner">
+        <div class="about-text">
+          <span class="about-eyebrow"><span class="en">About the company</span><span class="es">Sobre la empresa</span></span>
+          <h2>BPT Remodeling Construction, Inc.</h2>
+          <p><span class="en">We're a remodeling and finish contractor working out of Utah — licensed and insured, and working in Idaho Falls, ID as well. Painting, drywall, framing, flooring, tile and carpentry are all handled in-house, which is why the finish work actually matches the rest of the house.</span><span class="es">Somos un contratista de remodelación y acabados en Utah — con licencia y seguro, y trabajando también en Idaho Falls, ID. Pintura, drywall, framing, pisos, azulejo y carpintería los hacemos nosotros, y por eso el acabado final sí combina con el resto de la casa.</span></p>
+          <p><span class="en">Most of our work comes from neighbors and repeat customers. You talk to the same people who show up to do the job, in English or Spanish.</span><span class="es">La mayoría de nuestro trabajo llega por recomendación y clientes que regresan. Habla con las mismas personas que llegan a hacer el trabajo, en inglés o español.</span></p>
+          <div class="badges">
+            <span><span class="en">Licensed &amp; insured</span><span class="es">Licencia y seguro</span></span>
+            <span>Utah + Idaho</span>
+            <span><span class="en">English / Spanish</span><span class="es">Inglés / Español</span></span>
+          </div>
+        </div>
+        <div class="about-gallery-col">
+          <div class="about-gallery">
+            <!-- IMÁGENES: reemplazar cada bloque por <img src="..."> con fotos reales de trabajos terminados -->
+            <div class="tall img-placeholder"><img src="img/e4580d20-176f-46f1-92cc-8930ec6107b4.jpg" alt=""></div>
+            <div class="img-placeholder"><img src="img/77ed88f1-055f-4c1d-a0d2-3c3aa29de5f9.jpg" alt=""></div>
+            <div class="img-placeholder"><img src="img/c825287c-1d72-4bd3-bda7-88a4e9765e65.jpg" alt=""></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section id="faq">
+    <div class="section-pad">
+      <div class="section-head" style="border-bottom:3px solid var(--navy); margin-bottom:32px;">
+        <h2><span class="en">Questions we get asked</span><span class="es">Preguntas frecuentes</span></h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3><span class="en">Are you licensed and insured?</span><span class="es">¿Tienen licencia y seguro?</span></h3>
+          <p><span class="en">Yes. We're licensed and insured in Utah, and we also work in Idaho Falls, ID. We'll send proof before work starts.</span><span class="es">Sí. Tenemos licencia y seguro en Utah, y también trabajamos en Idaho Falls, ID. Le enviamos los comprobantes antes de empezar.</span></p>
+        </div>
+        <div class="faq-item">
+          <h3><span class="en">How much will my project cost?</span><span class="es">¿Cuánto cuesta mi proyecto?</span></h3>
+          <p><span class="en">It depends on size, materials and condition, so we price it after seeing it. The walkthrough and estimate are free.</span><span class="es">Depende del tamaño, los materiales y el estado, así que damos el precio después de verlo. La visita y el presupuesto son gratis.</span></p>
+        </div>
+        <div class="faq-item">
+          <h3><span class="en">Do you take small jobs?</span><span class="es">¿Aceptan trabajos pequeños?</span></h3>
+          <p><span class="en">Yes — one room of paint, a drywall patch, a set of baseboards. Same crew, same standard as a full remodel.</span><span class="es">Sí — pintar un cuarto, resanar drywall, poner baseboards. El mismo equipo y el mismo estándar que en una remodelación completa.</span></p>
+        </div>
+        <div class="faq-item">
+          <h3><span class="en">Can you match my existing texture?</span><span class="es">¿Pueden igualar la textura existente?</span></h3>
+          <p><span class="en">That's one of the things we do most. Knockdown, orange peel or smooth — matched so the repair isn't the first thing you see.</span><span class="es">Es uno de nuestros trabajos más comunes. Knockdown, orange peel o liso — igualado para que la reparación no salte a la vista.</span></p>
+        </div>
+        <div class="faq-item">
+          <h3><span class="en">How soon can you start?</span><span class="es">¿Qué tan pronto pueden empezar?</span></h3>
+          <p><span class="en">Depends on the season and the size of the job. Call and we'll tell you the real next opening — not a maybe.</span><span class="es">Depende de la temporada y del tamaño del trabajo. Llame y le decimos la fecha real disponible, sin rodeos.</span></p>
+        </div>
+        <div class="faq-item">
+          <h3><span class="en">Do you speak Spanish?</span><span class="es">¿Hablan español?</span></h3>
+          <p><span class="en">Yes — the whole crew works in English and Spanish, from the estimate to the final walkthrough.</span><span class="es">Sí — todo el equipo trabaja en español e inglés, desde el presupuesto hasta la revisión final.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="cta">
+    <div class="cta-inner">
+      <div>
+        <h2><span class="en">Tell us what needs doing</span><span class="es">Cuéntenos qué necesita</span></h2>
+        <p><span class="en">One call, a free walkthrough, and a written price. English or Spanish.</span><span class="es">Una llamada, visita gratis y precio por escrito. En español o inglés.</span></p>
+      </div>
+      <div class="cta-actions">
+        <a class="cta-call" href="tel:+13854922104">385 492 2104</a>
+        <a class="cta-email" href="mailto:bptremodelingllc@outlook.com">bptremodelingllc@outlook.com</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-col">
+        <div class="footer-logo-box" style="border-radius: 10px;"><img src="img/logo.jpg" alt="BPT Remodeling" height="90" width="180"></div>
+        <p style="margin-top:14px; max-width:38ch;"><span class="en">Remodeling, drywall, paint and finish carpentry. Licensed and insured in Utah · Idaho Falls, ID.</span><span class="es">Remodelación, drywall, pintura y carpintería de acabado. Con licencia y seguro en Utah · Idaho Falls, ID.</span></p>
+      </div>
+      <div class="footer-col">
+        <span class="label"><span class="en">Services</span><span class="es">Servicios</span></span>
+        <span class="line"><span class="en">Painting · Drywall · Texture</span><span class="es">Pintura · Drywall · Textura</span></span>
+        <span class="line"><span class="en">Framing · Flooring · Tile</span><span class="es">Framing · Pisos · Azulejo</span></span>
+        <span class="line"><span class="en">Finish carpentry · Kitchens · Baths</span><span class="es">Carpintería · Cocinas · Baños</span></span>
+      </div>
+      <div class="footer-col">
+        <span class="label"><span class="en">Contact</span><span class="es">Contacto</span></span>
+        <a class="phone" href="tel:+13854922104">385 492 2104</a>
+        <a class="mail" href="mailto:bptremodelingllc@outlook.com">bptremodelingllc@outlook.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BPT Remodeling Construction, Inc.</span>
+      <span><span class="en">Serving Utah County, Salt Lake County and Idaho Falls, ID</span><span class="es">Atendemos Utah County, Salt Lake County e Idaho Falls, ID</span></span>
+    </div>
+  </footer>
+
+  <script>
+    function toggleLang(){
+      var body = document.body;
+      var btn = document.getElementById('lang-btn-label');
+      if (body.classList.contains('lang-en')) {
+        body.classList.remove('lang-en');
+        btn.textContent = 'EN';
+      } else {
+        body.classList.add('lang-en');
+        btn.textContent = 'ES';
+      }
+    }
+  </script>
+
+</body>
+</html>
