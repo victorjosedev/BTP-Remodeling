@@ -214,6 +214,7 @@
     position:relative; overflow:hidden; border:1px solid rgba(10,32,80,.12);
     background:#fff; box-shadow:0 10px 20px rgba(17,24,39,.06);
     min-height:260px; transition:transform .2s ease, box-shadow .2s ease;
+    cursor:pointer;
   }
   .gallery-item:hover{ transform:translateY(-2px); box-shadow:0 18px 28px rgba(17,24,39,.10); }
   .gallery-item img{ width:100%; height:100%; min-height:260px; object-fit:cover; display:block; }
@@ -224,6 +225,23 @@
   }
   .gallery-tag{ display:inline-block; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#D9E5FF; margin-bottom:6px; }
   .gallery-info h3{ font-size:26px; line-height:1; color:#fff; }
+  .gallery-modal{
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(8,18,33,.82); padding:24px; z-index:100;
+    opacity:0; visibility:hidden; transition:opacity .2s ease, visibility .2s ease;
+  }
+  .gallery-modal.open{ opacity:1; visibility:visible; }
+  .gallery-modal-inner{
+    position:relative; max-width:1000px; width:min(100%, 980px); background:#fff; border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 25px 60px rgba(0,0,0,.35);
+  }
+  .gallery-modal img{ display:block; width:100%; max-height:78vh; object-fit:cover; }
+  .gallery-modal .gallery-modal-caption{ padding:14px 16px 18px; background:#fff; color:var(--navy); }
+  .gallery-modal .gallery-modal-caption strong{ display:block; font-size:18px; margin-bottom:4px; }
+  .gallery-modal-close{
+    position:absolute; right:-12px; top:-12px; width:36px; height:36px; border-radius:50%; border:none; background:var(--red);
+    color:#fff; font-size:22px; font-weight:700; cursor:pointer;
+  }
 
   .faq-grid{ display:grid; grid-template-columns:1fr; gap:24px; }
   .faq-item h3{ font-size:19px; color:var(--navy); margin-bottom:8px; line-height:1.15; }
@@ -549,54 +567,16 @@
         <button class="gallery-tab" type="button" data-filter="remodel" aria-selected="false"><span class="en">Remodels</span><span class="es">Remodelación</span></button>
       </div>
 
-      <div class="gallery-grid">
-        <article class="gallery-item" data-category="kitchens remodel">
-          <img src="../../img/Kitchen%20Remodeling.jpg" alt="Kitchen remodeling project">
-          <div class="gallery-info">
-            <span class="gallery-tag"><span class="en">Kitchen remodel</span><span class="es">Remodelación de cocina</span></span>
-            <h3><span class="en">Updated kitchen</span><span class="es">Cocina renovada</span></h3>
+      <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
+      <div id="gallery-modal" class="gallery-modal" aria-hidden="true">
+        <div class="gallery-modal-inner">
+          <button class="gallery-modal-close" type="button" aria-label="Close image">×</button>
+          <img id="gallery-modal-image" src="" alt="">
+          <div class="gallery-modal-caption">
+            <strong id="gallery-modal-title">Project</strong>
+            <span id="gallery-modal-subtitle">Before &amp; after work</span>
           </div>
-        </article>
-
-        <article class="gallery-item" data-category="painting remodel">
-          <img src="../../img/Exterior%20Painting%2C%20Door%20%26%20Window%20Installation%2C%20Home%20Renovations.jpg" alt="Exterior painting and home renovation project">
-          <div class="gallery-info">
-            <span class="gallery-tag"><span class="en">Exterior painting</span><span class="es">Pintura exterior</span></span>
-            <h3><span class="en">Fresh curb appeal</span><span class="es">Mejor apariencia exterior</span></h3>
-          </div>
-        </article>
-
-        <article class="gallery-item" data-category="flooring remodel">
-          <img src="../../img/Laminate%20Flooring.jpg" alt="Laminate flooring installation project">
-          <div class="gallery-info">
-            <span class="gallery-tag"><span class="en">Flooring install</span><span class="es">Instalación de pisos</span></span>
-            <h3><span class="en">New floors</span><span class="es">Pisos nuevos</span></h3>
-          </div>
-        </article>
-
-        <article class="gallery-item" data-category="remodel flooring">
-          <img src="../../img/Flooring.jpg" alt="Flooring and finish work project">
-          <div class="gallery-info">
-            <span class="gallery-tag"><span class="en">Finish detail</span><span class="es">Detalle terminado</span></span>
-            <h3><span class="en">Clean, durable finish</span><span class="es">Acabado limpio y durable</span></h3>
-          </div>
-        </article>
-
-        <article class="gallery-item" data-category="kitchens remodel">
-          <img src="../../img/Bath%20remodeling.jpg" alt="Bathroom remodeling project">
-          <div class="gallery-info">
-            <span class="gallery-tag"><span class="en">Bath remodel</span><span class="es">Remodelación de baño</span></span>
-            <h3><span class="en">Modern bath upgrade</span><span class="es">Baño moderno renovado</span></h3>
-          </div>
-        </article>
-
-        <article class="gallery-item" data-category="remodel painting">
-          <img src="../../img/Home%20Renovations%20%20New%20Construction.jpg" alt="Home renovation and new construction project">
-          <div class="gallery-info">
-            <span class="gallery-tag"><span class="en">Home renovation</span><span class="es">Renovación de casa</span></span>
-            <h3><span class="en">Before and after transformation</span><span class="es">Transformación antes y después</span></h3>
-          </div>
-        </article>
+        </div>
       </div>
     </div>
   </section>
@@ -690,25 +670,109 @@
 
     document.addEventListener('DOMContentLoaded', function () {
       var tabs = document.querySelectorAll('.gallery-tab');
-      var items = document.querySelectorAll('.gallery-item');
+      var grid = document.getElementById('gallery-grid');
+      var modal = document.getElementById('gallery-modal');
+      var modalImage = document.getElementById('gallery-modal-image');
+      var modalTitle = document.getElementById('gallery-modal-title');
+      var modalSubtitle = document.getElementById('gallery-modal-subtitle');
+      var activeFilter = 'all';
+
+      var items = [
+        { category: 'kitchens remodel', image: '../../img/Kitchen Remodeling.jpg', alt: 'Kitchen remodeling installation', tagEn: 'Kitchen remodel', tagEs: 'Remodelación de cocina', titleEn: 'Updated kitchen', titleEs: 'Cocina renovada' },
+        { category: 'kitchens remodel', image: '../../img/Kitchen Remodeling 1.jpg', alt: 'Kitchen remodel before after', tagEn: 'Kitchen remodel', tagEs: 'Remodelación de cocina', titleEn: 'Cabinet refresh', titleEs: 'Actualización de gabinetes' },
+        { category: 'kitchens remodel', image: '../../img/Kitchen Remodeling 2.jpg', alt: 'Kitchen remodel detail', tagEn: 'Kitchen remodel', tagEs: 'Remodelación de cocina', titleEn: 'Finishing details', titleEs: 'Detalles de acabado' },
+        { category: 'kitchens remodel', image: '../../img/Kitchen Remodeling 3.jpg', alt: 'Full kitchen transformation', tagEn: 'Kitchen remodel', tagEs: 'Remodelación de cocina', titleEn: 'Full transformation', titleEs: 'Transformación completa' },
+        { category: 'painting remodel', image: '../../img/Exterior Painting, Door & Window Installation, Home Renovations.jpg', alt: 'Exterior painting project', tagEn: 'Exterior painting', tagEs: 'Pintura exterior', titleEn: 'Fresh curb appeal', titleEs: 'Mejor apariencia exterior' },
+        { category: 'painting remodel', image: '../../img/Exterior Painting, Door & Window Installation, Home Renovations 1.jpg', alt: 'Exterior painting and window project', tagEn: 'Exterior painting', tagEs: 'Pintura exterior', titleEn: 'Front elevation update', titleEs: 'Actualización de fachada' },
+        { category: 'painting remodel', image: '../../img/Exterior Painting, Door & Window Installation, Home Renovations 2.jpg', alt: 'Door and window installation project', tagEn: 'Exterior paint', tagEs: 'Pintura exterior', titleEn: 'Door & trim refresh', titleEs: 'Actualización de puertas' },
+        { category: 'painting remodel', image: '../../img/Exterior Painting, Door & Window Installation, Home Renovations 3.jpg', alt: 'House renovation exterior finish', tagEn: 'Home renovation', tagEs: 'Renovación de hogar', titleEn: 'Exterior upgrade', titleEs: 'Actualización exterior' },
+        { category: 'flooring remodel', image: '../../img/Flooring.jpg', alt: 'Flooring install project', tagEn: 'Flooring install', tagEs: 'Instalación de pisos', titleEn: 'New floors', titleEs: 'Pisos nuevos' },
+        { category: 'flooring remodel', image: '../../img/Laminate Flooring.jpg', alt: 'Laminate flooring project', tagEn: 'Laminate floors', tagEs: 'Pisos laminados', titleEn: 'Hardwood look finish', titleEs: 'Acabado tipo madera' },
+        { category: 'flooring remodel', image: '../../img/Laminate Flooring 2.jpg', alt: 'Laminate install detail', tagEn: 'Flooring install', tagEs: 'Instalación de pisos', titleEn: 'Smooth, durable finish', titleEs: 'Acabado liso y durable' },
+        { category: 'flooring remodel', image: '../../img/Laminate Flooring 3.jpg', alt: 'Modern flooring installation', tagEn: 'Flooring install', tagEs: 'Instalación de pisos', titleEn: 'Clean profile', titleEs: 'Perfil limpio' },
+        { category: 'flooring remodel', image: '../../img/Laminate Flooring 4.jpg', alt: 'Laminate floor renovation', tagEn: 'Flooring install', tagEs: 'Instalación de pisos', titleEn: 'Solid finish', titleEs: 'Acabado sólido' },
+        { category: 'flooring remodel', image: '../../img/Laminate Flooring 5.jpg', alt: 'Laminate fit and finish', tagEn: 'Flooring install', tagEs: 'Instalación de pisos', titleEn: 'Polished look', titleEs: 'Acabado pulido' },
+        { category: 'remodel', image: '../../img/Bath remodeling.jpg', alt: 'Bathroom remodeling project', tagEn: 'Bath remodel', tagEs: 'Remodelación de baño', titleEn: 'Modern bath upgrade', titleEs: 'Baño moderno renovado' },
+        { category: 'remodel', image: '../../img/Home Renovations.jpg', alt: 'Home renovation project', tagEn: 'Home renovation', tagEs: 'Renovación de hogar', titleEn: 'Before and after', titleEs: 'Antes y después' },
+        { category: 'remodel', image: '../../img/Home Renovations 2.jpg', alt: 'Renovated home interior', tagEn: 'Home renovation', tagEs: 'Renovación de hogar', titleEn: 'Open living space', titleEs: 'Espacio acogedor' },
+        { category: 'remodel', image: '../../img/Home Renovations3.jpg', alt: 'Home improvement project', tagEn: 'Home renovation', tagEs: 'Renovación de hogar', titleEn: 'Updated finish work', titleEs: 'Acabado actualizado' },
+        { category: 'remodel', image: '../../img/Home Renovations  New Construction.jpg', alt: 'New construction and renovation', tagEn: 'Renovation', tagEs: 'Renovación', titleEn: 'Built for daily life', titleEs: 'Hecho para el día a día' },
+        { category: 'remodel', image: '../../img/Home Renovations  New Construction 2.jpg', alt: 'Home renovation detail', tagEn: 'Renovation', tagEs: 'Renovación', titleEn: 'Crafted details', titleEs: 'Detalles cuidadosos' },
+        { category: 'remodel', image: '../../img/Home Renovations  New Construction 3.jpg', alt: 'Interior upgrade project', tagEn: 'Renovation', tagEs: 'Renovación', titleEn: 'Bright and functional', titleEs: 'Luminoso y funcional' },
+        { category: 'remodel', image: '../../img/Home Renovations  New Construction 4.jpg', alt: 'Modern home remodel', tagEn: 'Renovation', tagEs: 'Renovación', titleEn: 'Room-by-room update', titleEs: 'Actualización por cuarto' },
+        { category: 'remodel', image: '../../img/Home Renovations  New Construction5.jpg', alt: 'Construction and finishing project', tagEn: 'Renovation', tagEs: 'Renovación', titleEn: 'Detail-focused work', titleEs: 'Trabajo detallista' },
+        { category: 'remodel', image: '../../img/Cabinet Installation, Finish Carpentry y Laminate Flooring.jpg', alt: 'Cabinet and finish carpentry project', tagEn: 'Cabinet & trim', tagEs: 'Gabinetes y trim', titleEn: 'Custom finish carpentry', titleEs: 'Carpintería personalizada' },
+        { category: 'remodel', image: '../../img/Cabinet Installation, Finish Carpentry y Laminate Flooring. 2.jpg', alt: 'Cabinet and flooring remodeling', tagEn: 'Cabinet & trim', tagEs: 'Gabinetes y trim', titleEn: 'Clean installation', titleEs: 'Instalación limpia' },
+        { category: 'remodel', image: '../../img/Cabinet Installation, Finish Carpentry y Laminate Flooring 3.jpg', alt: 'Cabinet carpentry detail', tagEn: 'Cabinet & trim', tagEs: 'Gabinetes y trim', titleEn: 'Styled finish', titleEs: 'Acabado estilo' }
+      ];
+
+      function renderGallery(filter) {
+        grid.innerHTML = '';
+        items.forEach(function (item) {
+          var matches = filter === 'all' || item.category.indexOf(filter) !== -1;
+          if (!matches) return;
+
+          var article = document.createElement('article');
+          article.className = 'gallery-item';
+          article.dataset.category = item.category;
+          article.setAttribute('tabindex', '0');
+          article.innerHTML = [
+            '<img src="' + item.image + '" alt="' + item.alt + '">',
+            '<div class="gallery-info">',
+            '<span class="gallery-tag"><span class="en">' + item.tagEn + '</span><span class="es">' + item.tagEs + '</span></span>',
+            '<h3><span class="en">' + item.titleEn + '</span><span class="es">' + item.titleEs + '</span></h3>',
+            '</div>'
+          ].join('');
+
+          article.addEventListener('click', function () {
+            modalImage.src = item.image;
+            modalImage.alt = item.alt;
+            modalTitle.textContent = item.titleEn;
+            modalSubtitle.textContent = item.tagEn;
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+          });
+          article.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              article.click();
+            }
+          });
+          grid.appendChild(article);
+        });
+      }
+
+      function setFilter(filter) {
+        activeFilter = filter;
+        tabs.forEach(function (btn) {
+          var isActive = btn.getAttribute('data-filter') === filter;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        renderGallery(filter);
+      }
 
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
-          var filter = tab.getAttribute('data-filter');
-
-          tabs.forEach(function (btn) {
-            var isActive = btn === tab;
-            btn.classList.toggle('active', isActive);
-            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-          });
-
-          items.forEach(function (item) {
-            var category = item.getAttribute('data-category') || '';
-            var show = filter === 'all' || category.indexOf(filter) !== -1;
-            item.classList.toggle('hidden', !show);
-          });
+          setFilter(tab.getAttribute('data-filter'));
         });
       });
+
+      modal.addEventListener('click', function (event) {
+        if (event.target === modal || event.target.classList.contains('gallery-modal-close')) {
+          modal.classList.remove('open');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal.classList.contains('open')) {
+          modal.classList.remove('open');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      setFilter(activeFilter);
     });
   </script>
 
