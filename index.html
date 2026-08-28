@@ -197,6 +197,34 @@
   .about-gallery-col{ width:100%; min-width:0; }
 
   /* ---------- FAQ ---------- */
+  /* ---------- GALLERY ---------- */
+  .gallery-section{ background:linear-gradient(180deg, #ffffff 0%, #F4F5F7 100%); }
+  .gallery-tabs{ display:flex; flex-wrap:wrap; gap:10px; margin:0 0 24px; }
+  .gallery-tab{
+    border:1px solid #D6DAE1; background:#fff; color:var(--navy);
+    font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase; padding:10px 16px; cursor:pointer;
+    transition:all .2s ease;
+  }
+  .gallery-tab.active{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .gallery-grid{
+    display:grid; grid-template-columns:1fr; gap:18px;
+  }
+  .gallery-item{
+    position:relative; overflow:hidden; border:1px solid rgba(10,32,80,.12);
+    background:#fff; box-shadow:0 10px 20px rgba(17,24,39,.06);
+    min-height:260px; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .gallery-item:hover{ transform:translateY(-2px); box-shadow:0 18px 28px rgba(17,24,39,.10); }
+  .gallery-item img{ width:100%; height:100%; min-height:260px; object-fit:cover; display:block; }
+  .gallery-item.hidden{ display:none; }
+  .gallery-info{
+    position:absolute; left:0; right:0; bottom:0; padding:16px 18px 18px; background:linear-gradient(180deg, transparent 0%, rgba(10,32,80,.84) 100%);
+    color:#fff;
+  }
+  .gallery-tag{ display:inline-block; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#D9E5FF; margin-bottom:6px; }
+  .gallery-info h3{ font-size:26px; line-height:1; color:#fff; }
+
   .faq-grid{ display:grid; grid-template-columns:1fr; gap:24px; }
   .faq-item h3{ font-size:19px; color:var(--navy); margin-bottom:8px; line-height:1.15; }
   .faq-item p{ font-size:15px; line-height:1.6; color:var(--gray-text); margin:0; }
@@ -266,6 +294,10 @@
     .about-gallery .tall{ grid-column:1 / -1; min-height:0; }
     .about-gallery .img-placeholder{ min-height:0; height:100%; }
 
+    .gallery-grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); }
+    .gallery-item{ min-height:280px; }
+    .gallery-item img{ min-height:280px; }
+
     .faq-grid{ grid-template-columns:repeat(2,1fr); gap:36px 56px; }
 
     .cta-inner{ flex-direction:row; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:52px 32px; }
@@ -285,6 +317,7 @@
         <a href="#services"><span class="en">Services</span><span class="es">Servicios</span></a>
         <a href="#process"><span class="en">Process</span><span class="es">Proceso</span></a>
         <a href="#areas"><span class="en">Service Area</span><span class="es">Cobertura</span></a>
+        <a href="#gallery"><span class="en">Gallery</span><span class="es">Galería</span></a>
         <a href="#about"><span class="en">About</span><span class="es">Nosotros</span></a>
         <a href="#faq">FAQ</a>
       </nav>
@@ -499,6 +532,75 @@
     </div>
   </section>
 
+  <!-- ================= GALLERY ================= -->
+  <section id="gallery" class="gallery-section">
+    <div class="section-pad">
+      <div class="section-head">
+        <h2><span class="en">Recent work</span><span class="es">Trabajos recientes</span></h2>
+        <p><span class="en">A quick look at the kind of remodeling, repairs and finishes we do for homeowners around Utah.</span><span class="es">Un vistazo rápido del tipo de remodelaciones, reparaciones y acabados que hacemos para propietarios en Utah.</span></p>
+      </div>
+
+      <div class="gallery-tabs" role="tablist" aria-label="Project filters">
+        <button class="gallery-tab active" type="button" data-filter="all" aria-selected="true"><span class="en">All work</span><span class="es">Todo</span></button>
+        <button class="gallery-tab" type="button" data-filter="painting" aria-selected="false"><span class="en">Painting</span><span class="es">Pintura</span></button>
+        <button class="gallery-tab" type="button" data-filter="drywall" aria-selected="false"><span class="en">Drywall</span><span class="es">Drywall</span></button>
+        <button class="gallery-tab" type="button" data-filter="flooring" aria-selected="false"><span class="en">Flooring</span><span class="es">Pisos</span></button>
+        <button class="gallery-tab" type="button" data-filter="kitchens" aria-selected="false"><span class="en">Kitchens &amp; baths</span><span class="es">Cocinas y baños</span></button>
+        <button class="gallery-tab" type="button" data-filter="remodel" aria-selected="false"><span class="en">Remodels</span><span class="es">Remodelación</span></button>
+      </div>
+
+      <div class="gallery-grid">
+        <article class="gallery-item" data-category="painting remodel">
+          <img src="img/e4580d20-176f-46f1-92cc-8930ec6107b4.jpg" alt="Interior paint refresh in a home">
+          <div class="gallery-info">
+            <span class="gallery-tag"><span class="en">Interior painting</span><span class="es">Pintura interior</span></span>
+            <h3><span class="en">Whole-room refresh</span><span class="es">Renovación completa de habitación</span></h3>
+          </div>
+        </article>
+
+        <article class="gallery-item" data-category="drywall remodel">
+          <img src="img/77ed88f1-055f-4c1d-a0d2-3c3aa29de5f9.jpg" alt="Drywall repair and wall finish project">
+          <div class="gallery-info">
+            <span class="gallery-tag"><span class="en">Drywall repair</span><span class="es">Reparación de drywall</span></span>
+            <h3><span class="en">Smooth wall finish</span><span class="es">Acabado de pared liso</span></h3>
+          </div>
+        </article>
+
+        <article class="gallery-item" data-category="kitchens remodeling">
+          <img src="img/c825287c-1d72-4bd3-bda7-88a4e9765e65.jpg" alt="Kitchen remodel with fresh cabinets and tile">
+          <div class="gallery-info">
+            <span class="gallery-tag"><span class="en">Kitchen remodel</span><span class="es">Remodelación de cocina</span></span>
+            <h3><span class="en">Updated kitchen</span><span class="es">Cocina renovada</span></h3>
+          </div>
+        </article>
+
+        <article class="gallery-item" data-category="flooring remodel">
+          <img src="img/worker.jpg" alt="Flooring installation work in a residential project">
+          <div class="gallery-info">
+            <span class="gallery-tag"><span class="en">Flooring install</span><span class="es">Instalación de pisos</span></span>
+            <h3><span class="en">New floors, clean finish</span><span class="es">Pisos nuevos y acabado limpio</span></h3>
+          </div>
+        </article>
+
+        <article class="gallery-item" data-category="remodel kitchens">
+          <img src="img/e4580d20-176f-46f1-92cc-8930ec6107b4.jpg" alt="Bathroom remodel with tile and trim detail">
+          <div class="gallery-info">
+            <span class="gallery-tag"><span class="en">Bath remodel</span><span class="es">Remodelación de baño</span></span>
+            <h3><span class="en">Modern finish details</span><span class="es">Detalles modernos y acabados</span></h3>
+          </div>
+        </article>
+
+        <article class="gallery-item" data-category="painting drywall">
+          <img src="img/77ed88f1-055f-4c1d-a0d2-3c3aa29de5f9.jpg" alt="Freshly painted room with repaired walls">
+          <div class="gallery-info">
+            <span class="gallery-tag"><span class="en">Paint &amp; patch</span><span class="es">Pintura y resanes</span></span>
+            <h3><span class="en">Clean, bright walls</span><span class="es">Paredes limpias y luminosas</span></h3>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= FAQ ================= -->
   <section id="faq">
     <div class="section-pad">
@@ -585,6 +687,29 @@
         btn.textContent = 'ES';
       }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var tabs = document.querySelectorAll('.gallery-tab');
+      var items = document.querySelectorAll('.gallery-item');
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var filter = tab.getAttribute('data-filter');
+
+          tabs.forEach(function (btn) {
+            var isActive = btn === tab;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+
+          items.forEach(function (item) {
+            var category = item.getAttribute('data-category') || '';
+            var show = filter === 'all' || category.indexOf(filter) !== -1;
+            item.classList.toggle('hidden', !show);
+          });
+        });
+      });
+    });
   </script>
 
 </body>
